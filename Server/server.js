@@ -4,15 +4,41 @@ const cors = require('cors');
 import { connectDB } from './DBconnection';
 import securityapiRouter from './routes/securityRouter';
 import priceapiRouter from './routes/priceRouter';
+const socketIo = require('socket.io');
+const http = require('http');
+
 const app = express();
-const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+const server = http.createServer(app);
+const io = socketIo(server);
+let rowData = [
+    { id: 1, name: 'John', age: 30 },
+    { id: 2, name: 'Jane', age: 28 }
+];
+
+// Function to send updated data to clients
+function sendDataToClients() {
+    io.emit('updateData', rowData);
+}
+
+
+// Trigger data update every 5 seconds (for demo purposes)
+setInterval(() => {
+    // Modify rowData as needed
+    // For demo, just reverse the order
+    rowData = rowData.reverse();
+    sendDataToClients();
+}, 5000);
 
 connectDB();
-app.use(cors());
+
 // Body Parser Middleware
 app.use(bodyParser.json());
 
 app.use('/api', securityapiRouter);
 app.use('/api', priceapiRouter);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(5000, () => {
+    console.log('Server is running on port 5000');
+});
