@@ -1,0 +1,10 @@
+{
+  "name": "your-project",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run start:Server\" \"npm run start:Build\" \"npm run start:Client\"",
+    "start:Server": "cd Server && npm start",
+    "start:Build": "cd Client && npm build",
+    "start:Client": "cd Client && npm start"
+  }
+}
